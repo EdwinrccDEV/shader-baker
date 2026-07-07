@@ -1,0 +1,78 @@
+@font-face {
+    font-family: 'PixelFont';
+    src: url('../fonts/pixel_font.ttf') format('truetype');
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+body {
+    background-image: url('../images/bg_sketch.png');
+    background-size: cover; background-position: center;
+    background-color: #1a1a1a; background-blend-mode: multiply;
+    font-family: 'PixelFont', monospace;
+    color: white; height: 100vh; display: flex; flex-direction: column;
+    overflow: hidden;
+}
+
+/* ================= BARRA SUPERIOR ================= */
+.top-menu {
+    background: #5b4699; border-bottom: 2px solid #fff;
+    display: flex; padding: 0 10px; height: 35px; align-items: center; z-index: 10;
+}
+.menu-item {
+    position: relative; padding: 5px 15px; cursor: pointer;
+    font-size: 18px; text-shadow: 1px 1px 0 #000; border-radius: 5px 5px 0 0;
+}
+.menu-item:hover { background: #7c8cd4; }
+.menu-item .dropdown {
+    display: none; position: absolute; top: 100%; left: 0;
+    background: #5b4699; border: 2px solid #7c8cd4; border-radius: 0 5px 5px 5px;
+    min-width: 200px; box-shadow: 5px 5px 10px rgba(0,0,0,0.5); z-index: 20;
+}
+.menu-item:hover .dropdown { display: block; }
+.dropdown a {
+    display: block; padding: 10px; color: white; text-decoration: none;
+    font-size: 16px; border-bottom: 1px solid #7c8cd4; text-shadow: 1px 1px 0 #000;
+}
+.dropdown a:hover { background: #7c8cd4; }
+
+/* ================= ÁREA DE TRABAJO ================= */
+.workspace { display: flex; flex: 1; overflow: hidden; }
+
+/* Panel Izquierdo */
+.sliders-panel {
+    flex: 1; padding: 30px; display: flex; flex-direction: column;
+    max-width: 500px;
+}
+#editor-title { text-align: center; margin-bottom: 40px; font-size: 24px; text-shadow: 2px 2px 0 #000; }
+
+/* Diseño Sliders Estilo FNF */
+.slider-group { margin-bottom: 25px; display: flex; flex-direction: column; }
+.slider-group > label { font-size: 18px; margin-bottom: 10px; text-shadow: 2px 2px 0 #000; }
+
+.slider-row { display: flex; align-items: center; gap: 10px; }
+.value-box {
+    background: #000; border: 1px solid white; border-radius: 10px;
+    width: 45px; text-align: center; padding: 2px; font-size: 12px;
+}
+
+/* Slider Personalizado */
+input[type="range"] {
+    -webkit-appearance: none; width: 100%; height: 8px; border-radius: 4px;
+    background: linear-gradient(90deg, #7c2e8c var(--pct, 50%), #000 var(--pct, 50%));
+    border: 1px solid #444; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: #000; border: 2px solid #fff; cursor: pointer;
+}
+
+/* Panel Derecho (Canvas) */
+.canvas-panel {
+    flex: 1.5; display: flex; justify-content: center; align-items: center;
+    position: relative;
+}
+canvas {
+    max-width: 100%; max-height: 90vh;
+    image-rendering: pixelated; /* Para que el sprite se vea nítido */
+}

@@ -1,0 +1,203 @@
+/* Importar la fuente personalizada */
+@font-face {
+    font-family: 'PixelFont';
+    src: url('../fonts/pixel_font.ttf') format('truetype'); /* Ajusta la extensión si es .otf o .woff */
+}
+
+/* Reseteo básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background-color: #111;
+    font-family: 'PixelFont', monospace;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Forzar a todos los navegadores a mostrar los píxeles súper nítidos (cero borrosidad) */
+.pixel-img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+}
+
+
+/* Barra superior */
+.top-bar {
+    background-color: #6b3f99; /* Color morado de la barra */
+    border-bottom: 4px solid #4a2a6b;
+    padding: 10px 20px;
+    z-index: 10;
+}
+
+.top-bar h1 {
+    color: white;
+    font-size: 24px;
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 2px;
+}
+
+/* Contenedor del Menú con el fondo dibujado */
+.menu-container {
+    flex: 1;
+    background-image: url('../images/bg_sketch.png'); /* Tu fondo oscuro */
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply; /* Oscurece el fondo un poco si hace falta */
+    padding: 40px;
+    position: relative;
+}
+
+/* Grid para los botones */
+.projects-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Tarjeta / Botón del Menú */
+.project-card {
+    background: linear-gradient(180deg, #5b4699 0%, #3a2a66 100%);
+    border: 4px solid #7c8cd4;
+    border-radius: 20px;
+    width: 180px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 20px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.5), 5px 5px 15px rgba(0,0,0,0.6);
+    transition: transform 0.1s, filter 0.1s;
+}
+
+.project-card:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+.project-card:active {
+    transform: scale(0.95);
+}
+
+.card-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 5px; /* Un poco de margen para que no toque los bordes */
+}
+
+/* Hacemos el sprite mucho más grande dentro de la tarjeta */
+.card-icon .sprite {
+    max-height: 140px; /* Antes estaba en 100px, ahora ocupará más espacio */
+    max-width: 150px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.project-card h2 {
+    color: white;
+    font-size: 16px;
+    text-shadow: 2px 2px 0 #000;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Botón de papelera para eliminar presets */
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.delete-btn img {
+    width: 24px;
+    image-rendering: pixelated;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2) rotate(10deg);
+    filter: brightness(1.5);
+}
+
+#rotate-overlay {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #111;
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.rotate-content h1 {
+    font-size: 32px;
+    color: #f38ba8;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 10px;
+}
+
+.rotate-content p {
+    font-size: 18px;
+    color: #cdd6f4;
+}
+
+/* Si el dispositivo está en modo vertical (portrait) */
+@media screen and (orientation: portrait) {
+    #rotate-overlay {
+        display: flex; /* Muestra el aviso */
+    }
+    
+    /* Oculta la app para evitar que interactúen en vertical */
+    .top-bar, .menu-container {
+        display: none !important; 
+    }
+}
+
+/* Modal de Nuevo Shader */
+.modal-overlay {
+    display: none; /* Oculto por defecto */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); z-index: 100;
+    justify-content: center; align-items: center;
+}
+.modal-box {
+    background: #5b4699; border: 4px solid #7c8cd4; border-radius: 15px;
+    padding: 30px; text-align: center; color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.modal-box h2 { font-size: 24px; margin-bottom: 20px; text-shadow: 2px 2px 0 #000; }
+.modal-box input {
+    font-family: 'PixelFont', monospace; font-size: 18px;
+    padding: 10px; width: 80%; margin-bottom: 20px;
+    background: #111; color: white; border: 2px solid #7c8cd4; border-radius: 5px;
+}
+.modal-buttons { display: flex; justify-content: space-around; }
+.modal-buttons button {
+    font-family: 'PixelFont', monospace; font-size: 16px; cursor: pointer;
+    padding: 10px 20px; border: 2px solid #000; border-radius: 8px;
+}
+#btn-cancel { background: #ff4c4c; color: white; }
+#btn-confirm { background: #4cff4c; color: black; }

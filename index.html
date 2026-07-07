@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shader Baker - Menú Principal</title>
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+    <!-- Pantalla que se muestra si el dispositivo está en vertical -->
+    <div id="rotate-overlay">
+        <div class="rotate-content">
+            <h1 class="pixel-text">GIRA TU PANTALLA</h1>
+            <p>Esta herramienta funciona mejor en horizontal</p>
+        </div>
+    </div>
+
+    <!-- Barra Superior -->
+    <header class="top-bar">
+        <h1>SHADER BAKER</h1>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="menu-container">
+        
+        <!-- Lista de Proyectos / Shaders (0 proyectos iniciales) -->
+        <div class="projects-grid">
+            
+            <!-- Botón de Nuevo Shader -->
+            <div class="project-card new-shader" id="btn-new-shader">
+                <div class="card-icon">
+                    <img src="images/btn_plus.png" alt="Plus" class="pixel-img">
+                </div>
+                <h2>NEW SHADER</h2>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal para nombrar el nuevo Shader -->
+    <div id="name-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Nombra tu Shader</h2>
+            <input type="text" id="shader-name-input" placeholder="Escribe aquí..." autocomplete="off">
+            <div class="modal-buttons">
+                <button id="btn-cancel">Cancelar</button>
+                <button id="btn-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Shader Baker - Editor</title>
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+
+    <!-- Menú Superior Oculto para inputs de archivo -->
+    <input type="file" id="imageLoader" accept="image/png" style="display:none;">
+    <input type="file" id="bgLoader" accept="image/*" style="display:none;">
+
+    <!-- Barra Superior (Dropdowns) -->
+    <nav class="top-menu">
+        <div class="menu-item">
+            <span>Edit</span>
+            <div class="dropdown">
+                <a href="#" data-group="topmask">Top Mask Color</a>
+                <a href="#" data-group="spritecolor">Sprite Color</a>
+                <a href="#" data-group="lightcolor">Light Color</a>
+                <a href="#" data-group="lightparams">Light Parameters</a>
+                <a href="#" data-group="spritesettings">Sprite Settings</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span>Reset</span>
+            <div class="dropdown">
+                <a href="#" data-reset="topmask">Top Mask Color</a>
+                <a href="#" data-reset="spritecolor">Sprite Color</a>
+                <a href="#" data-reset="lightcolor">Light Color</a>
+                <a href="#" data-reset="lightparams">Light Parameters</a>
+                <a href="#" data-reset="spritesettings">Sprite Settings</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span>Sprite</span>
+            <div class="dropdown">
+                <a href="#" id="menu-load-sprite">Cargar Sprite</a>
+                <a href="#" id="menu-load-bg">Cargar Fondo</a>
+                <a href="#" id="menu-reset-bg">Reiniciar Fondo</a>
+                <a href="#" id="menu-download">Descargar Sprite</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span>Opciones</span>
+            <div class="dropdown">
+                <a href="#" id="menu-save">Guardar</a>
+                <a href="#" id="menu-exit">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Área de Trabajo -->
+    <div class="workspace">
+        
+        <!-- Panel Izquierdo: Sliders -->
+        <div class="sliders-panel">
+            <h2 id="editor-title">Editing Top Mask Color</h2>
+            
+            <div id="sliders-container">
+                <!-- Los sliders se generan mediante JS según el grupo activo -->
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Canvas -->
+        <div class="canvas-panel">
+            <canvas id="glcanvas"></canvas>
+        </div>
+    </div>
+
+    <script src="js/editor.js"></script>
+</body>
+</html>
