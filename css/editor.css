@@ -8,7 +8,6 @@
 body {
     background-image: url('../images/bg_sketch.png');
     background-size: cover; background-position: center;
-    background-color: #1a1a1a; background-blend-mode: multiply;
     font-family: 'PixelFont', monospace;
     color: white; height: 100vh; display: flex; flex-direction: column;
     overflow: hidden;
