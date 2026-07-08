@@ -186,13 +186,38 @@ document.getElementById('menu-reset-bg').addEventListener('click', () => {
     canvas.style.backgroundImage = 'none';
     canvas.style.backgroundColor = 'transparent';
 });
+// ====== DESCARGAR / EXPORTAR ======
 document.getElementById('menu-download').addEventListener('click', () => {
     if (!isImageLoaded) return alert("¡No hay imagen para descargar!");
-    const link = document.createElement('a');
-    link.download = 'Shader_Export.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+
+    const finalDataUrl = canvas.toDataURL('image/png');
+    
+    // Detectar si es un móvil (iOS/Android) o una PC
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // En móviles (iOS/Android) abrimos el Modal para que mantengan presionado
+        const modal = document.getElementById('export-modal');
+        if (modal) {
+            document.getElementById('export-result-img').src = finalDataUrl;
+            modal.style.display = 'flex';
+        }
+    } else {
+        // En PC descargamos directamente
+        const link = document.createElement('a');
+        link.download = 'Shader_Export.png';
+        link.href = finalDataUrl;
+        link.click();
+    }
 });
+
+// Botón para cerrar el modal de exportación (Si existe en el HTML)
+const btnCloseExport = document.getElementById('btn-close-export');
+if (btnCloseExport) {
+    btnCloseExport.addEventListener('click', () => {
+        document.getElementById('export-modal').style.display = 'none';
+    });
+}
 
 // ====== WEBGL (NÚCLEO DE SHADERS ORIGINAL) ======
 const gl = canvas.getContext('webgl', { preserveDrawingBuffer: true });
