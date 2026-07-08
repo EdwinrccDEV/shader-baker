@@ -68,6 +68,20 @@
             <canvas id="glcanvas"></canvas>
         </div>
     </div>
+    <!-- Modal de Exportación Universal (PC, Android, iOS) -->
+<div id="export-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #5b4699; border: 4px solid #7c8cd4; border-radius: 15px; padding: 20px; text-align: center; color: white; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+        
+        <h2 style="font-size: 22px; margin-bottom: 10px; text-shadow: 2px 2px 0 #000;">¡SPRITE LISTO!</h2>
+        <p style="font-size: 14px; margin-bottom: 15px; color: #cdd6f4;">Mantén presionada la imagen (o haz clic derecho) para guardarla.</p>
+        
+        <!-- LA IMAGEN CON EL FIX PARA iOS (-webkit-touch-callout) -->
+        <img id="export-result-img" style="width: 100%; max-height: 250px; object-fit: contain; image-rendering: pixelated; border: 2px dashed #7c8cd4; background: #111; margin-bottom: 20px; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto;">
+        
+        <br>
+        <button id="btn-close-export" style="background: #ff4c4c; color: white; border: 2px solid #000; border-radius: 8px; padding: 10px 20px; font-family: 'PixelFont', monospace; font-size: 16px; cursor: pointer;">CERRAR</button>
+    </div>
+</div>
 
     <script src="js/editor.js"></script>
 </body>
