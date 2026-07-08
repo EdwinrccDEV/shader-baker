@@ -116,8 +116,60 @@ document.querySelectorAll('[data-reset]').forEach(link => {
 renderSliders("topmask");
 
 // ====== OPCIONES (GUARDAR Y SALIR) ======
-// Capturar una versión miniatura del canvas para el menú
-// Capturar el canvas directamente en calidad original (100% nítido y pixel-perfect)
+// ====== COPIAR Y PEGAR CÓDIGO (COMPATIBLE CON TURBOWARP) ======
+
+// COPIAR CÓDIGO
+document.getElementById('menu-copy-code').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Obtiene los 20 parámetros en el orden exacto
+    const values = paramOrder.map(id => currentValues[id]);
+    
+    // Lo convierte en texto (ej: "0,0,1,0, ...") quitando decimales muy largos
+    const codeString = values.map(v => Number.isInteger(v) ? v : Number(v.toFixed(3))).join(',');
+    
+    // Intenta copiar al portapapeles del dispositivo
+    navigator.clipboard.writeText(codeString).then(() => {
+        alert("¡Código copiado al portapapeles!\n" + codeString);
+    }).catch(err => {
+        // Plan B por si el móvil bloquea el portapapeles automático
+        prompt("Copia este código manualmente:", codeString);
+    });
+
+    // Ocultar el menú desplegable (truco visual)
+    e.target.closest('.dropdown').style.display = 'none'; 
+    setTimeout(()=> e.target.closest('.dropdown').style.display = '', 100);
+});
+
+// IMPORTAR CÓDIGO
+document.getElementById('menu-import-code').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Preguntar al usuario por el código
+    const codeString = prompt("Pega aquí el código del shader (20 dígitos separados por comas):");
+    
+    if (codeString && codeString.trim() !== "") {
+        // Separar el texto por comas y convertir a números
+        const p = codeString.split(',').map(n => Number(n) || 0);
+        
+        // Asignar los números a nuestros valores actuales siguiendo el orden oficial
+        paramOrder.forEach((id, index) => {
+            currentValues[id] = p[index] || 0;
+        });
+        
+        hasUnsavedChanges = true; // Marcar que hay cambios sin guardar
+        
+        // Actualizar la interfaz (los sliders) para que reflejen los nuevos números
+        renderSliders(activeGroup); 
+        
+        alert("¡Código importado con éxito!");
+    }
+    
+    // Ocultar el menú desplegable (truco visual)
+    e.target.closest('.dropdown').style.display = 'none'; 
+    setTimeout(()=> e.target.closest('.dropdown').style.display = '', 100);
+});
+
 function getThumbnailBase64() {
     return canvas.toDataURL('image/png');
 }
