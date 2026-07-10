@@ -116,6 +116,8 @@ document.querySelectorAll('[data-reset]').forEach(link => {
 renderSliders("topmask");
 
 // ====== OPCIONES (GUARDAR Y SALIR) ======
+// Capturar una versión miniatura del canvas para el menú
+// Capturar el canvas directamente en calidad original (100% nítido y pixel-perfect)
 // ====== COPIAR Y PEGAR CÓDIGO (COMPATIBLE CON TURBOWARP) ======
 
 // COPIAR CÓDIGO
@@ -228,6 +230,124 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 // ====== LÓGICA DE ARCHIVOS (SPRITES Y FONDOS) ======
+
+// === NUEVAS VARIABLES PARA ANIMACIÓN ===
+const xmlLoader = document.getElementById('xmlLoader');
+const animCanvas = document.getElementById('animcanvas');
+const animCtx = animCanvas.getContext('2d');
+const animSelect = document.getElementById('anim-select');
+const animSelectorContainer = document.getElementById('anim-selector-container');
+
+let animations = {}; // Guardará todas las animaciones separadas
+let currentAnimName = null;
+let currentFrameIdx = 0;
+let isAnimating = false;
+
+// Botón del menú para clickear el input oculto
+document.getElementById('menu-load-xml').addEventListener('click', (e) => {
+    e.preventDefault();
+    if(!isImageLoaded) return alert("¡Por favor carga el PNG (Sprite) primero antes que el XML!");
+    xmlLoader.click();
+});
+
+// LECTOR DE XML (Estilo Sparrow V2 / FNF)
+xmlLoader.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(event.target.result, "text/xml");
+        const subTextures = xmlDoc.getElementsByTagName("SubTexture");
+        
+        animations = {}; // Limpiar animaciones viejas
+        
+        // Recorrer todos los recortes del XML
+        for (let i = 0; i < subTextures.length; i++) {
+            const st = subTextures[i];
+            const rawName = st.getAttribute("name");
+            
+            // FNF nombra los frames tipo "idle0000", "idle0001". Le quitamos los números finales para agruparlos
+            const animName = rawName.replace(/[0-9]+$/, ""); 
+            
+            if (!animations[animName]) {
+                animations[animName] = [];
+            }
+            
+            // Guardar los datos de recorte
+            animations[animName].push({
+                x: parseInt(st.getAttribute("x")),
+                y: parseInt(st.getAttribute("y")),
+                w: parseInt(st.getAttribute("width")),
+                h: parseInt(st.getAttribute("height")),
+                frameX: parseInt(st.getAttribute("frameX")) || 0,
+                frameY: parseInt(st.getAttribute("frameY")) || 0,
+                frameW: parseInt(st.getAttribute("frameWidth")) || parseInt(st.getAttribute("width")),
+                frameH: parseInt(st.getAttribute("frameHeight")) || parseInt(st.getAttribute("height"))
+            });
+        }
+        
+        // Llenar el menú desplegable con las animaciones encontradas
+        animSelect.innerHTML = '';
+        for (let name in animations) {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.innerText = name;
+            animSelect.appendChild(opt);
+        }
+        
+        // Activar el modo animación
+        if(Object.keys(animations).length > 0) {
+            animSelectorContainer.style.display = 'block';
+            currentAnimName = Object.keys(animations)[0];
+            
+            // Ocultar el WebGL gigante y mostrar nuestro Canvas animado
+            canvas.style.opacity = '0'; // Lo ponemos transparente pero sigue funcionando
+            animCanvas.style.display = 'block';
+            isAnimating = true;
+        }
+    };
+    reader.readAsText(file);
+});
+
+// Cambiar de animación desde el menú desplegable
+animSelect.addEventListener('change', (e) => {
+    currentAnimName = e.target.value;
+    currentFrameIdx = 0;
+});
+
+// === EL MOTOR DE ANIMACIÓN (Se ejecuta a 24 FPS) ===
+setInterval(() => {
+    if (!isAnimating || !currentAnimName || !animations[currentAnimName]) return;
+    
+    const frames = animations[currentAnimName];
+    const frame = frames[currentFrameIdx];
+    
+    // Ajustar el tamaño del canvas animado al tamaño original de la animación
+    animCanvas.width = frame.frameW;
+    animCanvas.height = frame.frameH;
+    
+    // Limpiar frame anterior
+    animCtx.clearRect(0, 0, animCanvas.width, animCanvas.height);
+    
+    // Calcular offsets de FNF para que no tiemble
+    const destX = Math.abs(frame.frameX);
+    const destY = Math.abs(frame.frameY);
+    
+    // TRUCO MAESTRO: Dibujamos en el 2D Canvas copiando un pedacito del WebGL Canvas ya horneado
+    animCtx.drawImage(
+        canvas, // Origen: El canvas WebGL oculto con shaders
+        frame.x, frame.y, frame.w, frame.h, // Recorte: x, y, ancho, alto
+        destX, destY, frame.w, frame.h // Destino en el nuevo canvas
+    );
+    
+    // Avanzar al siguiente frame
+    currentFrameIdx++;
+    if(currentFrameIdx >= frames.length) currentFrameIdx = 0;
+
+}, 1000 / 24); // 24 FPS (Velocidad estándar de FNF)
+
 const imageLoader = document.getElementById('imageLoader');
 const bgLoader = document.getElementById('bgLoader');
 const canvas = document.getElementById('glcanvas');
@@ -240,9 +360,22 @@ document.getElementById('menu-reset-bg').addEventListener('click', () => {
 });
 // ====== DESCARGAR / EXPORTAR ======
 document.getElementById('menu-download').addEventListener('click', () => {
-    if (!isImageLoaded) return alert("¡No hay imagen para descargar!");
+    if (!isImageLoaded) return alert("¡No hay imagen para exportar!");
 
-    const finalDataUrl = canvas.toDataURL('image/png');
+    // 1. Forzar a la tarjeta gráfica a renderizar en este exacto milisegundo
+    renderShader(); 
+
+    // 2. Crear un canvas 2D temporal en la memoria (es mucho más estable que WebGL)
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    // 3. Dibujar el resultado del WebGL en el canvas 2D
+    tempCtx.drawImage(canvas, 0, 0);
+
+    // 4. Tomar la foto desde el canvas 2D (¡Adiós cuadros negros!)
+    const finalDataUrl = tempCanvas.toDataURL('image/png');
     
     // Detectar si es un móvil (iOS/Android) o una PC
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -414,6 +547,9 @@ function renderShader() {
     gl.uniform1f(gl.getUniformLocation(program, "brightness"), currentValues.bri);
     gl.uniform1f(gl.getUniformLocation(program, "contrast"), currentValues.con);
 
+    gl.clearColor(0.0, 0.0, 0.0, 0.0); 
+    gl.clear(gl.COLOR_BUFFER_BIT);    
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 setInterval(renderShader, 100);
@@ -433,6 +569,12 @@ function loadTextureFromImg(img) {
 
 // Cargar sprite custom
 imageLoader.addEventListener('change', (e) => {
+    // Apagar animación si se carga imagen nueva
+    isAnimating = false;
+    animSelectorContainer.style.display = 'none';
+    canvas.style.opacity = '1';
+    animCanvas.style.display = 'none';
+    animations = {};
     const reader = new FileReader();
     reader.onload = (event) => {
         const img = new Image();

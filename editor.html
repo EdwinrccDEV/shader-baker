@@ -7,8 +7,9 @@
 </head>
 <body>
 
-    <!-- Menú Superior Oculto para inputs de archivo -->
+    <!--inputs de archivo -->
     <input type="file" id="imageLoader" accept="image/png" style="display:none;">
+     <input type="file" id="xmlLoader" accept=".xml" style="display:none;"> <!-- NUEVO -->
     <input type="file" id="bgLoader" accept="image/*" style="display:none;">
 
     <!-- Barra Superior (Dropdowns) -->
@@ -36,11 +37,17 @@
         <div class="menu-item">
             <span>Sprite</span>
             <div class="dropdown">
-                <a href="#" id="menu-load-sprite">Cargar Sprite</a>
+                <a href="#" id="menu-load-sprite">1. Cargar Sprite (PNG)</a>
+                <a href="#" id="menu-load-xml">2. Cargar XML (Opcional)</a>
                 <a href="#" id="menu-load-bg">Cargar Fondo</a>
                 <a href="#" id="menu-reset-bg">Reiniciar Fondo</a>
                 <a href="#" id="menu-download">Descargar Sprite</a>
             </div>
+        </div>
+        
+        <!-- Selector de animación -->
+        <div class="menu-item" id="anim-selector-container" style="display: none; padding: 0 10px;">
+            <select id="anim-select" style="background: #111; color: white; font-family: 'PixelFont', monospace; padding: 5px; border: 2px solid #7c8cd4; border-radius: 5px; outline: none; cursor: pointer;"></select>
         </div>
         <div class="menu-item">
             <span>Opciones</span>
@@ -67,17 +74,21 @@
 
         <!-- Panel Derecho: Canvas -->
         <div class="canvas-panel">
+            <!-- El canvas WebGL  -->
             <canvas id="glcanvas"></canvas>
+            
+            <!-- mostrará solo la animación recortada -->
+            <canvas id="animcanvas" style="display: none; position: absolute; max-width: 100%; max-height: 90vh; image-rendering: pixelated;"></canvas>
         </div>
     </div>
-    <!-- Modal de Exportación Universal (PC, Android, iOS) -->
+    <!-- Modal de Exportación -->
 <div id="export-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: #5b4699; border: 4px solid #7c8cd4; border-radius: 15px; padding: 20px; text-align: center; color: white; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
         
         <h2 style="font-size: 22px; margin-bottom: 10px; text-shadow: 2px 2px 0 #000;">¡SPRITE LISTO!</h2>
-        <p style="font-size: 14px; margin-bottom: 15px; color: #cdd6f4;">Mantén presionada la imagen (o haz clic derecho) para guardarla.</p>
+        <p style="font-size: 14px; margin-bottom: 15px; color: #cdd6f4;">Mantén presionada la imagen para guardarla.</p>
         
-        <!-- LA IMAGEN CON EL FIX PARA iOS (-webkit-touch-callout) -->
+        <!-- FIX PARA iOS -->
         <img id="export-result-img" style="width: 100%; max-height: 250px; object-fit: contain; image-rendering: pixelated; border: 2px dashed #7c8cd4; background: #111; margin-bottom: 20px; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto;">
         
         <br>
